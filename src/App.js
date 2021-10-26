@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { fiatCurrencies } from "./constants";
 
+// set up axios instance
 const client = axios.create({
   baseURL: "https://api.coingecko.com/api/v3",
 });
@@ -13,8 +14,9 @@ export default function App() {
   const [currency, setCurrency] = useState(null);
   const [numBTC, setNumBTC] = useState(null);
 
-  const checkCurrency = (currency) => {
-    if (!fiatCurrencies.includes(currency)) {
+  // check to see if currency is a fiat currency
+  const checkCurrency = (input) => {
+    if (!fiatCurrencies.includes(input)) {
       setError("Not a valid fiat currency.");
     }
   };
@@ -22,10 +24,11 @@ export default function App() {
   const handleInputAmount = (e) => {
     setNumBTC(e.target.value);
   };
+
   const handleInputCurrency = (e) => {
-    setCurrency(e.target.value);
+    setCurrency(e.target.value.toUpperCase());
     if (e.target.value.length === 3) {
-      checkCurrency(e.target.value);
+      checkCurrency(e.target.value.toUpperCase());
       return;
     }
     if (error) {
@@ -33,6 +36,7 @@ export default function App() {
     }
   };
 
+  // get request to coingecko for BTC info for a specific currency
   const fetchBTCData = async (currency) => {
     const response = await client.get(
       `/coins/bitcoin/market_chart?vs_currency=${currency}&days=0`
@@ -41,6 +45,12 @@ export default function App() {
   };
 
   const getBTCConversion = async (numBTC, currency) => {
+    // ensure currency is valid format
+    const regex = /^([A-Z]{3})$/;
+    if (!regex.test(currency)) {
+      setError("Invalid currency for API.");
+      return;
+    }
     const currentPrice = await fetchBTCData(currency);
     const total = currentPrice * numBTC;
     setDisplay(`Total: ${total.toFixed(2)} ${currency}`);
@@ -49,7 +59,7 @@ export default function App() {
   return (
     <div className="App">
       <div className="main">
-        {display && <div className="display">{display}</div>}
+        <div className="display">{display ? display : "Convert BTC to..."}</div>
         <div className="inputArea">
           <input
             onChange={(e) => handleInputAmount(e)}

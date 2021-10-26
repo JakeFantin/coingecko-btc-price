@@ -59,3 +59,7 @@
 .currencyInput {
   text-transform: uppercase;
 }
+
+.error {
+  color: red;
+}
