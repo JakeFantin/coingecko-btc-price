@@ -1,4 +1,4 @@
-#CoinGecko BTC Price Checker
+# CoinGecko BTC Price Checker
 
 ## This is a simple web application to get the current price of BTC and then convert it to a given fiat currency. The amount of BTC to convert is also provided by the user.
 
